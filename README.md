@@ -3,7 +3,7 @@
     If using this code causes your server to have kittens, it is your own fault.
 
 This monolith drives much of the ingest, processing, product generation, and
-web presence of the [IEM](https://mesonet.agron.iastate.edu).  Hopefully it can
+web presence of the [IEM](https://mesonet.agron.iastate.edu). Hopefully it can
 be found useful for others to at least look at to see how some of the magic happens.
 
 Limited integration testing is done on Github Actions: [![Build Status](https://github.com/akrherz/iem/workflows/Install%20and%20Test/badge.svg)](https://github.com/akrherz/iem)

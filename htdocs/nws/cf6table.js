@@ -1,6 +1,6 @@
 /* global $ */
 $(document).ready(() => {
-    $('#makefancy').click(() => {
-        $("#thetable").DataTable();
-    });
+  $("#makefancy").click(() => {
+    $("#thetable").DataTable();
+  });
 });

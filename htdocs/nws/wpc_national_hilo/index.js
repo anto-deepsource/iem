@@ -1,4 +1,4 @@
 // global $
-$('#makefancy').click(() => {
-    $("#thetable table").DataTable();
+$("#makefancy").click(() => {
+  $("#thetable table").DataTable();
 });
