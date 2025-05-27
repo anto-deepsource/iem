@@ -1,8 +1,6 @@
-National Mesonet Project Meetings
-======
+# National Mesonet Project Meetings
 
-25 Jan 2017 SGT Conference call at AMS Seattle
-----
+## 25 Jan 2017 SGT Conference call at AMS Seattle
 
 - Background of SGT, primarly with NASA (400 out of 550m $US)
 - South Alabama Mesonet presentation

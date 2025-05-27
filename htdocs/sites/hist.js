@@ -1,5 +1,5 @@
 /* global $ */
 
 $(document).ready(() => {
-    $("#thetable").DataTable();
+  $("#thetable").DataTable();
 });

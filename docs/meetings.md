@@ -1,8 +1,6 @@
-Assorted Meeting Notes
-=====
+# Assorted Meeting Notes
 
-14 Jan 2020 Dr Takle, Iowa Climate Assessment
-----
+## 14 Jan 2020 Dr Takle, Iowa Climate Assessment
 
 - Seeking to have first Iowa specific climate assessment report made
 - Just to note that Iowa is one of the few states without sig orography
@@ -13,8 +11,7 @@ Assorted Meeting Notes
 - Seek a report on Iowa's current human health related to climate
 - would be nice to talk some about ozone, but am unsure of data sources
 
-30 Aug 2018 Monsanto
------
+## 30 Aug 2018 Monsanto
 
 - Taylor, Todey, Arritt, Dohleman, Colman
 - 10-11 Oct in St Louis is the ag-mesonets workshop
@@ -28,14 +25,13 @@ Assorted Meeting Notes
 - hours below temperature per year would be helpful
 - wind speed does not fully descriminate inversion presence
 
-29 Mar 2016 Syngenta Discussion at Slater
-----
+## 29 Mar 2016 Syngenta Discussion at Slater
 
 - Joe Colleti, Bill Bevis, Kendall Lamkey, Joe Byrun, Greg Dudan, Homer Coden
-Josh Larson, Paul Travis, Danny Sign, Jim Reece, Tom Warner, Chad Geater
-Craig Davis, Mike Lorsan, Caroline Lawrence, James Coyle
+  Josh Larson, Paul Travis, Danny Sign, Jim Reece, Tom Warner, Chad Geater
+  Craig Davis, Mike Lorsan, Caroline Lawrence, James Coyle
 - Conference calls left off with need to resolve access and mechanics of how
-this would work out.
+  this would work out.
 - Syngenta has roughtly relationships with 15-20 Universities per 12-18 months
 - Never known transfer of actual data to another university though
 - Discussion about what the NSF funded midwest data hub looks like
@@ -48,10 +44,10 @@ this would work out.
 - USDA has a new foundation called FAR to fund stuff
 - NSF proposal cycle has deadlines for next Jan, Feb
 - the hope is that these proposals would be coming from blessing by the hub
-spokes and not rouge proposals
+  spokes and not rouge proposals
 - There are always proposal deadlines for things to consider
 - There are collaboration opportunities withe computer engineering and others
-to deal with computational tasks
+  to deal with computational tasks
 - Need to have a means to lure faculty into this that may have an interest
 - Syngenta has interest in persuing external funding
 - We'll be having breakouts today to further discuss things
@@ -72,7 +68,7 @@ to deal with computational tasks
 - They are working on data tagging.
 - Some of the datasets have changes in how the data was observed over the years
 - Would it be good to embed people within each institution to help with this
-collaboration?
+  collaboration?
 - A vast majority of the data would take effort to move and curate, not ready
 - Lots of data already exists, no energy to start processing it
 - Cateloging the data is a big time sync
@@ -80,6 +76,6 @@ collaboration?
 - G2F is having good luck with standardizing protocols
 - Need to make sure questions being posed are not redundant between groups
 - There is a some NSF data hub meeting on May 15-16
-- Do ISU corn and soybean faculty currently collaborate?  Sort of.
+- Do ISU corn and soybean faculty currently collaborate? Sort of.
 - Not everybody at ISU is into team science :)
 - Talk about the structure of an ISU / Syngenta symposium
