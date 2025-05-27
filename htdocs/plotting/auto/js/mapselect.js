@@ -1,184 +1,180 @@
 /* global $, ol */
 
 const climateStyle = new ol.style.Style({
-    zIndex: 100,
-    image: new ol.style.Circle({
-        fill: new ol.style.Fill({ color: '#00ff00' }),
-        stroke: new ol.style.Stroke({
-            color: '#008800',
-            width: 2.25
-        }),
-        radius: 7
-    })
+  zIndex: 100,
+  image: new ol.style.Circle({
+    fill: new ol.style.Fill({ color: "#00ff00" }),
+    stroke: new ol.style.Stroke({
+      color: "#008800",
+      width: 2.25,
+    }),
+    radius: 7,
+  }),
 });
 
 const stationStyleOffline = new ol.style.Style({
-    zIndex: 99,
-    image: new ol.style.Circle({
-        fill: new ol.style.Fill({ color: '#ff0000' }),
-        stroke: new ol.style.Stroke({
-            color: '#880000',
-            width: 2.25
-        }),
-        radius: 7
-    })
+  zIndex: 99,
+  image: new ol.style.Circle({
+    fill: new ol.style.Fill({ color: "#ff0000" }),
+    stroke: new ol.style.Stroke({
+      color: "#880000",
+      width: 2.25,
+    }),
+    radius: 7,
+  }),
 });
 
 const climodistrictStyle = new ol.style.Style({
-    zIndex: 101,
-    text: new ol.style.Text({
-        text: '',
-        font: 'bold 14pt serif',
-        fill: new ol.style.Fill({
-            color: [255, 255, 255, 1],
-        }),
-        backgroundFill: new ol.style.Fill({
-            color: [0, 0, 255, 1],
-        }),
-        padding: [2, 2, 2, 2],
-    })
+  zIndex: 101,
+  text: new ol.style.Text({
+    text: "",
+    font: "bold 14pt serif",
+    fill: new ol.style.Fill({
+      color: [255, 255, 255, 1],
+    }),
+    backgroundFill: new ol.style.Fill({
+      color: [0, 0, 255, 1],
+    }),
+    padding: [2, 2, 2, 2],
+  }),
 });
 
 const stateStyle = new ol.style.Style({
-    zIndex: 102,
-    text: new ol.style.Text({
-        text: '',
-        font: 'bold 14pt serif',
-        fill: new ol.style.Fill({
-            color: [255, 255, 255, 1],
-        }),
-        backgroundFill: new ol.style.Fill({
-            color: [255, 0, 0, 1],
-        }),
-        padding: [2, 2, 2, 2],
-    })
+  zIndex: 102,
+  text: new ol.style.Text({
+    text: "",
+    font: "bold 14pt serif",
+    fill: new ol.style.Fill({
+      color: [255, 255, 255, 1],
+    }),
+    backgroundFill: new ol.style.Fill({
+      color: [255, 0, 0, 1],
+    }),
+    padding: [2, 2, 2, 2],
+  }),
 });
 
-
 function stationLayerStyleFunc(feature) {
-    const network = feature.get("network");
-    if (network.search("CLIMATE") > 0) {
-        const sid = feature.get("sid");
-        if (sid.substr(2, 1) === "C") {
-            climodistrictStyle.getText().setText(sid.substr(0, 2) + parseInt(sid.substr(3, 3)));
-            return climodistrictStyle;
-        }
-        if (sid.substr(2, 4) === "0000") {
-            stateStyle.getText().setText(sid.substr(0, 2));
-            return stateStyle;
-        }
+  const network = feature.get("network");
+  if (network.search("CLIMATE") > 0) {
+    const sid = feature.get("sid");
+    if (sid.substr(2, 1) === "C") {
+      climodistrictStyle
+        .getText()
+        .setText(sid.substr(0, 2) + parseInt(sid.substr(3, 3)));
+      return climodistrictStyle;
     }
-    if (feature.get("archive_end") !== null) return stationStyleOffline; 
-    return climateStyle;
+    if (sid.substr(2, 4) === "0000") {
+      stateStyle.getText().setText(sid.substr(0, 2));
+      return stateStyle;
+    }
+  }
+  if (feature.get("archive_end") !== null) return stationStyleOffline;
+  return climateStyle;
 }
 
- 
 function mapFactory(network, formname) {
-    // Check the state of our button
-    const state = parseInt($(`#button_${network}_${formname}`).data("state"), 10);
-    if (state === 0) {
-        // first time to open
-        $(`#button_${network}_${formname}`).data("state", 1);
-        $(`#button_${network}_${formname}`).text("Hide Map");
-    } else if (state === 1) {
-        // Should hide me
-        $(`#button_${network}_${formname}`).data("state", 2);
-        $(`#button_${network}_${formname}`).text("Show Map");
-        $(`#map_${network}_${formname}_wrap`).css("display", "none");
-        return;
-    } else {
-        // Should show me
-        $(`#button_${network}_${formname}`).data("state", 1);
-        $(`#button_${network}_${formname}`).text("Hide Map");
-        $(`#map_${network}_${formname}_wrap`).css("display", "block");
-        return;
-    }
-
+  // Check the state of our button
+  const state = parseInt($(`#button_${network}_${formname}`).data("state"), 10);
+  if (state === 0) {
+    // first time to open
+    $(`#button_${network}_${formname}`).data("state", 1);
+    $(`#button_${network}_${formname}`).text("Hide Map");
+  } else if (state === 1) {
+    // Should hide me
+    $(`#button_${network}_${formname}`).data("state", 2);
+    $(`#button_${network}_${formname}`).text("Show Map");
+    $(`#map_${network}_${formname}_wrap`).css("display", "none");
+    return;
+  } else {
+    // Should show me
+    $(`#button_${network}_${formname}`).data("state", 1);
+    $(`#button_${network}_${formname}`).text("Hide Map");
     $(`#map_${network}_${formname}_wrap`).css("display", "block");
+    return;
+  }
 
-    const olMap = new ol.Map({
-        target: `map_${network}_${formname}`,
-        view: new ol.View({
-            enableRotation: false,
-            center: ol.proj.transform([-94.5, 42.1], 'EPSG:4326', 'EPSG:3857'),
-            zoom: 7,
-            maxZoom: 16,
-            minZoom: 1
-        }),
-        layers: [
-            new ol.layer.Tile({
-                title: 'OpenStreetMap',
-                visible: true,
-                type: 'base',
-                source: new ol.source.OSM()
-            })
-        ]
-    });
-    const stationLayer = new ol.layer.Vector({
-        title: "Stations",
-        source: new ol.source.Vector({
-            url: `/geojson/network.py?network=${network}`,
-            format: new ol.format.GeoJSON()
-        }),
-        style: stationLayerStyleFunc
-    });
-    stationLayer.getSource().on('change', () => {
-        if (stationLayer.getSource().getState() === 'ready') {
-            olMap.getView().fit(
-                stationLayer.getSource().getExtent(),
-                {
-                    size: olMap.getSize(),
-                    padding: [50, 50, 50, 50]
-                }
-            );
-        }
-    });
-    olMap.addLayer(stationLayer);
-    //  showing the position the user clicked
-    const popup = new ol.Overlay({
-        element: document.getElementById(`popup_${network}_${formname}`),
-        offset: [7, 7]
-    });
-    olMap.addOverlay(popup);
+  $(`#map_${network}_${formname}_wrap`).css("display", "block");
 
-    olMap.on('pointermove', (event) => {
-        if (event.dragging) { return; }
-        const feature = olMap.forEachFeatureAtPixel(event.pixel,
-            (feature2) => {
-                return feature2;
-            });
-        if (feature === undefined) {
-            popup.element.hidden = true;
-            return;
-        }
-        popup.element.hidden = false;
-        popup.setPosition(event.coordinate);
-        const html = [
-            `<strong>ID:</strong> ${feature.get("sid")}`,
-            `<br /><strong>Name:</strong> ${feature.get("sname")}`,
-            `<br /><strong>POR:</strong> ${feature.get("time_domain")}`,
-        ]
-        $(`#popup_${network}_${formname}`).html(html.join(""));
-    });
-    olMap.on("click", (event) => {
-        const feature = olMap.forEachFeatureAtPixel(event.pixel,
-            (feature2) => {
-                return feature2;
-            });
-        if (feature === undefined) {
-            return;
-        }
-        const station = feature.get("sid");
-        $(`select[name="${formname}"]`).select2().val(station).trigger("change");
-    });
-    // Fix responsive issues
-    olMap.updateSize();
+  const olMap = new ol.Map({
+    target: `map_${network}_${formname}`,
+    view: new ol.View({
+      enableRotation: false,
+      center: ol.proj.transform([-94.5, 42.1], "EPSG:4326", "EPSG:3857"),
+      zoom: 7,
+      maxZoom: 16,
+      minZoom: 1,
+    }),
+    layers: [
+      new ol.layer.Tile({
+        title: "OpenStreetMap",
+        visible: true,
+        type: "base",
+        source: new ol.source.OSM(),
+      }),
+    ],
+  });
+  const stationLayer = new ol.layer.Vector({
+    title: "Stations",
+    source: new ol.source.Vector({
+      url: `/geojson/network.py?network=${network}`,
+      format: new ol.format.GeoJSON(),
+    }),
+    style: stationLayerStyleFunc,
+  });
+  stationLayer.getSource().on("change", () => {
+    if (stationLayer.getSource().getState() === "ready") {
+      olMap.getView().fit(stationLayer.getSource().getExtent(), {
+        size: olMap.getSize(),
+        padding: [50, 50, 50, 50],
+      });
+    }
+  });
+  olMap.addLayer(stationLayer);
+  //  showing the position the user clicked
+  const popup = new ol.Overlay({
+    element: document.getElementById(`popup_${network}_${formname}`),
+    offset: [7, 7],
+  });
+  olMap.addOverlay(popup);
 
-};
+  olMap.on("pointermove", (event) => {
+    if (event.dragging) {
+      return;
+    }
+    const feature = olMap.forEachFeatureAtPixel(event.pixel, (feature2) => {
+      return feature2;
+    });
+    if (feature === undefined) {
+      popup.element.hidden = true;
+      return;
+    }
+    popup.element.hidden = false;
+    popup.setPosition(event.coordinate);
+    const html = [
+      `<strong>ID:</strong> ${feature.get("sid")}`,
+      `<br /><strong>Name:</strong> ${feature.get("sname")}`,
+      `<br /><strong>POR:</strong> ${feature.get("time_domain")}`,
+    ];
+    $(`#popup_${network}_${formname}`).html(html.join(""));
+  });
+  olMap.on("click", (event) => {
+    const feature = olMap.forEachFeatureAtPixel(event.pixel, (feature2) => {
+      return feature2;
+    });
+    if (feature === undefined) {
+      return;
+    }
+    const station = feature.get("sid");
+    $(`select[name="${formname}"]`).select2().val(station).trigger("change");
+  });
+  // Fix responsive issues
+  olMap.updateSize();
+}
 
 $().ready(() => {
-    // appease linter
-    $("#doesnotexist").click(() => {
-        mapFactory("IACLIMATE", "station");
-    });
+  // appease linter
+  $("#doesnotexist").click(() => {
+    mapFactory("IACLIMATE", "station");
+  });
 });

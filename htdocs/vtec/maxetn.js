@@ -1,4 +1,4 @@
 // global $
 $(document).ready(() => {
-    $("#thetable table").DataTable();
+  $("#thetable table").DataTable();
 });
