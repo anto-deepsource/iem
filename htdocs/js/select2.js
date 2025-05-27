@@ -1,4 +1,4 @@
 // global $
 $(() => {
-    $('.iemselect2').select2();
+  $(".iemselect2").select2();
 });
