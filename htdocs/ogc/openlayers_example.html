@@ -1,172 +1,206 @@
 <html>
-<head>
-  <title>IEM TMS + OpenLayers Example</title>
-  <script src="/vendor/openlayers/2.13.1/OpenLayers.js"></script> 
-  <script src="https://maps.google.com/maps/api/js?key=AIzaSyBylJPmC3W8b67nsiwN5gJP7Kkm2zwRrA4"></script> 
+  <head>
+    <title>IEM TMS + OpenLayers Example</title>
+    <script src="/vendor/openlayers/2.13.1/OpenLayers.js"></script>
+    <script src="https://maps.google.com/maps/api/js?key=AIzaSyBylJPmC3W8b67nsiwN5gJP7Kkm2zwRrA4"></script>
 
-<script type="text/javascript">
-var map;
-var n0q;
+    <script type="text/javascript">
+      var map;
+      var n0q;
 
-/*
- * You need to wrap your DOM manipulators into a function that is called after
- * the DOM is rendered!  Notice the onload="" attribute to the body tag below
- */
-function init(){
-    var maxExtent = new OpenLayers.Bounds(-20037508, -20037508, 20037508, 20037508),
-        restrictedExtent = maxExtent.clone(),
-        maxResolution = 156543.0339;
-    
-    var options = {
-        projection: new OpenLayers.Projection("EPSG:3857"),
-        displayProjection: new OpenLayers.Projection("EPSG:4326"),
-        units: "m",
-        numZoomLevels: 18,
-        maxResolution: maxResolution,
-        maxExtent: maxExtent,
-        restrictedExtent: restrictedExtent
-    };
-    map = new OpenLayers.Map('map', options);
+      /*
+       * You need to wrap your DOM manipulators into a function that is called after
+       * the DOM is rendered!  Notice the onload="" attribute to the body tag below
+       */
+      function init() {
+        var maxExtent = new OpenLayers.Bounds(
+            -20037508,
+            -20037508,
+            20037508,
+            20037508,
+          ),
+          restrictedExtent = maxExtent.clone(),
+          maxResolution = 156543.0339;
 
-    // create Google Mercator layers
-    var gmap = new OpenLayers.Layer.Google(
-        "Google Streets",
-        {sphericalMercator: true}
-    );
-    
-    function get_my_url_static (bounds) {
-        var res = this.map.getResolution();
-        var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
-        var y = Math.round ((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
-        var z = this.map.getZoom();
+        var options = {
+          projection: new OpenLayers.Projection("EPSG:3857"),
+          displayProjection: new OpenLayers.Projection("EPSG:4326"),
+          units: "m",
+          numZoomLevels: 18,
+          maxResolution: maxResolution,
+          maxExtent: maxExtent,
+          restrictedExtent: restrictedExtent,
+        };
+        map = new OpenLayers.Map("map", options);
 
-        var path = z + "/" + x + "/" + y + "." + this.type;
-        var url = this.url;
-        if (url instanceof Array) {
+        // create Google Mercator layers
+        var gmap = new OpenLayers.Layer.Google("Google Streets", {
+          sphericalMercator: true,
+        });
+
+        function get_my_url_static(bounds) {
+          var res = this.map.getResolution();
+          var x = Math.round(
+            (bounds.left - this.maxExtent.left) / (res * this.tileSize.w),
+          );
+          var y = Math.round(
+            (this.maxExtent.top - bounds.top) / (res * this.tileSize.h),
+          );
+          var z = this.map.getZoom();
+
+          var path = z + "/" + x + "/" + y + "." + this.type;
+          var url = this.url;
+          if (url instanceof Array) {
             url = this.selectUrl(path, url);
+          }
+          return url + this.service + "/" + this.layername + "/" + path;
         }
-        return url + this.service +"/"+ this.layername +"/"+ path;
+        function get_my_url(bounds) {
+          var res = this.map.getResolution();
+          var x = Math.round(
+            (bounds.left - this.maxExtent.left) / (res * this.tileSize.w),
+          );
+          var y = Math.round(
+            (this.maxExtent.top - bounds.top) / (res * this.tileSize.h),
+          );
+          var z = this.map.getZoom();
 
-}
-    function get_my_url (bounds) {
-            var res = this.map.getResolution();
-            var x = Math.round ((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
-            var y = Math.round ((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
-            var z = this.map.getZoom();
+          var path =
+            z +
+            "/" +
+            x +
+            "/" +
+            y +
+            "." +
+            this.type +
+            "?" +
+            parseInt(Math.random() * 9999);
+          var url = this.url;
+          if (url instanceof Array) {
+            url = this.selectUrl(path, url);
+          }
+          return url + this.service + "/" + this.layername + "/" + path;
+        }
+        n0q = new OpenLayers.Layer.TMS(
+          "NEXRAD Base Reflect",
+          "https://mesonet.agron.iastate.edu/c/tile.py/",
+          // Find more layer names here: https://mesonet.agron.iastate.edu/ogc/
+          {
+            layername: "ridge::USCOMP-N0Q-0",
+            service: "1.0.0",
+            type: "png",
+            visibility: false,
+            getURL: get_my_url_static,
+            isBaseLayer: false,
+          },
+        );
+        var irsat = new OpenLayers.Layer.TMS(
+          "GOES East IR Satellite",
+          "https://mesonet.agron.iastate.edu/cache/tile.py/",
+          {
+            layername: "goes-east-ir-4km",
+            service: "1.0.0",
+            type: "png",
+            visibility: false,
+            getURL: get_my_url,
+            isBaseLayer: false,
+          },
+        );
+        var vissat = new OpenLayers.Layer.TMS(
+          "GOES East Vis Satellite",
+          "https://mesonet.agron.iastate.edu/cache/tile.py/",
+          {
+            layername: "goes-east-vis-1km",
+            service: "1.0.0",
+            type: "png",
+            visibility: false,
+            getURL: get_my_url,
+            isBaseLayer: false,
+          },
+        );
+        var aksat = new OpenLayers.Layer.TMS(
+          "Alaska Vis Satellite",
+          "https://mesonet.agron.iastate.edu/cache/tile.py/",
+          {
+            layername: "alaska-vis",
+            service: "1.0.0",
+            type: "png",
+            visibility: false,
+            getURL: get_my_url,
+            isBaseLayer: false,
+          },
+        );
 
-            var path = z + "/" + x + "/" + y + "." + this.type +"?"+ parseInt(Math.random()*9999);
-            var url = this.url;
-            if (url instanceof Array) {
-                url = this.selectUrl(path, url);
-            }
-            return url + this.service +"/"+ this.layername +"/"+ path;
+        var states = new OpenLayers.Layer.TMS(
+          "US State Borders",
+          "https://mesonet.agron.iastate.edu/c/tile.py/",
+          {
+            layername: "usstates",
+            service: "1.0.0",
+            type: "png",
+            visibility: false,
+            getURL: get_my_url_static,
+            isBaseLayer: false,
+          },
+        );
 
-    }
-    n0q = new OpenLayers.Layer.TMS(
-                'NEXRAD Base Reflect',
-                'https://mesonet.agron.iastate.edu/c/tile.py/',
-                // Find more layer names here: https://mesonet.agron.iastate.edu/ogc/
-                {layername      : 'ridge::USCOMP-N0Q-0',
-                service         : '1.0.0',
-                type            : 'png',
-                visibility      : false,
-                getURL          : get_my_url_static,
-                isBaseLayer     : false}
-    );
-    var irsat = new OpenLayers.Layer.TMS(
-            'GOES East IR Satellite',
-            'https://mesonet.agron.iastate.edu/cache/tile.py/',
-            {layername      : 'goes-east-ir-4km',
-            service         : '1.0.0',
-            type            : 'png',
-            visibility      : false,
-            getURL          : get_my_url,
-            isBaseLayer     : false}
-    );
-    var vissat = new OpenLayers.Layer.TMS(
-            'GOES East Vis Satellite',
-            'https://mesonet.agron.iastate.edu/cache/tile.py/',
-            {layername      : 'goes-east-vis-1km',
-            service         : '1.0.0',
-            type            : 'png',
-            visibility      : false,
-            getURL          : get_my_url,
-            isBaseLayer     : false}
-    );
-    var aksat = new OpenLayers.Layer.TMS(
-            'Alaska Vis Satellite',
-            'https://mesonet.agron.iastate.edu/cache/tile.py/',
-            {layername      : 'alaska-vis',
-            service         : '1.0.0',
-            type            : 'png',
-            visibility      : false,
-            getURL          : get_my_url,
-            isBaseLayer     : false}
-    );
-    
-    var states = new OpenLayers.Layer.TMS(
-            'US State Borders',
-            'https://mesonet.agron.iastate.edu/c/tile.py/',
-            {layername      : 'usstates',
-            service         : '1.0.0',
-            type            : 'png',
-            visibility      : false,
-            getURL          : get_my_url_static,
-            isBaseLayer     : false}
-    );
-    
-    var wwa = new OpenLayers.Layer.WMS(
-            "WWA",
-            "https://mesonet.agron.iastate.edu/cgi-bin/wms/us/wwa.cgi?",
-            {layers: "warnings_c", transparent: "TRUE", format: 'image/png'},
-            {isBaseLayer: false, buffer:0, singleTile: false,
-             opacity: 0.5, visibility: false}
-    );
-    
-    map.addLayers([gmap, irsat, vissat, aksat, states, n0q, wwa]);
-    var ls = new OpenLayers.Control.LayerSwitcher();
-    map.addControl(ls);
-    ls.maximizeControl();
-    map.addControl(new OpenLayers.Control.MousePosition());
-    if (!map.getCenter()){ map.zoomToMaxExtent(); }
-    
-    function refresher(){
-        //console.log("call refresher()");
-        OpenLayers.Request.GET({
-            url: '/json/tms.json',
-            success: processData
+        var wwa = new OpenLayers.Layer.WMS(
+          "WWA",
+          "https://mesonet.agron.iastate.edu/cgi-bin/wms/us/wwa.cgi?",
+          { layers: "warnings_c", transparent: "TRUE", format: "image/png" },
+          {
+            isBaseLayer: false,
+            buffer: 0,
+            singleTile: false,
+            opacity: 0.5,
+            visibility: false,
+          },
+        );
+
+        map.addLayers([gmap, irsat, vissat, aksat, states, n0q, wwa]);
+        var ls = new OpenLayers.Control.LayerSwitcher();
+        map.addControl(ls);
+        ls.maximizeControl();
+        map.addControl(new OpenLayers.Control.MousePosition());
+        if (!map.getCenter()) {
+          map.zoomToMaxExtent();
+        }
+
+        function refresher() {
+          //console.log("call refresher()");
+          OpenLayers.Request.GET({
+            url: "/json/tms.json",
+            success: processData,
           });
-           
-          function processData( data ) {
-            var json = new OpenLayers.Format.JSON().read( data.responseText );
 
-            for (var i=0; i < json.services.length; i++){
-                var s = json.services[i];
-                if (s.id == 'ridge_uscomp_n0q'){
-                    var valid = new Date(s.utc_valid);
-                    n0q.setName("NEXRAD N0Q @"
-                        + ("0"+valid.getUTCHours()).slice(-2)
-                        + ("0"+valid.getUTCMinutes()).slice(-2)
-                        + " UTC");
-                    n0q.layername = s.layername;
-                    n0q.setVisibility(true);
-                }
+          function processData(data) {
+            var json = new OpenLayers.Format.JSON().read(data.responseText);
+
+            for (var i = 0; i < json.services.length; i++) {
+              var s = json.services[i];
+              if (s.id == "ridge_uscomp_n0q") {
+                var valid = new Date(s.utc_valid);
+                n0q.setName(
+                  "NEXRAD N0Q @" +
+                    ("0" + valid.getUTCHours()).slice(-2) +
+                    ("0" + valid.getUTCMinutes()).slice(-2) +
+                    " UTC",
+                );
+                n0q.layername = s.layername;
+                n0q.setVisibility(true);
+              }
             }
             n0q.redraw();
-
           }
-    }
-    refresher();
-    window.setInterval(function(){
+        }
         refresher();
-    }, 5*60000);
-    
-}
-</script>
-</head>
-<body onload="init()">
-    
-<div style="width:100%; height:100%" id="map"></div>
-    
-</body>
+        window.setInterval(function () {
+          refresher();
+        }, 5 * 60000);
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <div style="width: 100%; height: 100%" id="map"></div>
+  </body>
 </html>

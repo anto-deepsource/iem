@@ -1,4 +1,4 @@
 /* global $ */
 $().ready(() => {
-    $("#table1").filterTable({label: "Filter Table Using Text: "});
+  $("#table1").filterTable({ label: "Filter Table Using Text: " });
 });

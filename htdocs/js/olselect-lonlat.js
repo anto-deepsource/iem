@@ -3,65 +3,66 @@
 // that is dragable, which then callbacks a given function with the lat/lon
 // values of the marker.
 
-function olSelectLonLat(div, initialLon, initialLat, callback) { // skipcq
+function olSelectLonLat(div, initialLon, initialLat, callback) {
+  // skipcq
 
-    const marker = new ol.Feature({
-        geometry: new ol.geom.Point(ol.proj.fromLonLat([initialLon, initialLat]))
-    });
-    const style = new ol.style.Style({
-        image: new ol.style.Icon({
-            anchor: [0.5, 1],
-            src: '/images/marker.png',
+  const marker = new ol.Feature({
+    geometry: new ol.geom.Point(ol.proj.fromLonLat([initialLon, initialLat])),
+  });
+  const style = new ol.style.Style({
+    image: new ol.style.Icon({
+      anchor: [0.5, 1],
+      src: "/images/marker.png",
+    }),
+  });
+
+  // Set the style for the marker
+  marker.setStyle(style);
+
+  // Create a vector source and add the marker to it
+  const vectorSource = new ol.source.Vector({
+    features: [marker],
+  });
+
+  // Create a vector layer with the vector source and add it to the map
+  const vectorLayer = new ol.layer.Vector({
+    source: vectorSource,
+  });
+  const bingMapsApiKey = document.getElementById(div).dataset.bingmapsapikey;
+  const map = new ol.Map({
+    target: div,
+    layers: [
+      new ol.layer.Tile({
+        title: "Global Imagery",
+        source: new ol.source.BingMaps({
+          key: bingMapsApiKey,
+          imagerySet: "AerialWithLabelsOnDemand",
         }),
-    });
+      }),
+      vectorLayer,
+    ],
+    view: new ol.View({
+      center: ol.proj.fromLonLat([initialLon, initialLat]),
+      zoom: 5,
+    }),
+  });
 
-    // Set the style for the marker
-    marker.setStyle(style);
+  const modify = new ol.interaction.Modify({
+    hitDetection: vectorLayer,
+    source: vectorSource,
+  });
+  map.addInteraction(modify);
 
-    // Create a vector source and add the marker to it
-    const vectorSource = new ol.source.Vector({
-        features: [marker]
-    });
+  // Add a listener to the drag-and-drop interaction
+  modify.on("modifyend", (e) => {
+    const coords = e.features.getArray()[0].getGeometry().getCoordinates();
+    const lonLat = ol.proj.toLonLat(coords);
+    try {
+      callback(lonLat[0], lonLat[1]);
+    } catch (exp) {
+      console.log(exp);
+    }
+  });
 
-    // Create a vector layer with the vector source and add it to the map
-    const vectorLayer = new ol.layer.Vector({
-        source: vectorSource
-    });
-    const bingMapsApiKey = document.getElementById(div).dataset.bingmapsapikey;
-    const map = new ol.Map({
-        target: div,
-        layers: [
-            new ol.layer.Tile({
-                title: 'Global Imagery',
-                source: new ol.source.BingMaps({
-                    key: bingMapsApiKey,
-                    imagerySet: 'AerialWithLabelsOnDemand'
-                })
-            }),
-            vectorLayer
-        ],
-        view: new ol.View({
-            center: ol.proj.fromLonLat([initialLon, initialLat]),
-            zoom: 5
-        })
-    });
-
-    const modify = new ol.interaction.Modify({
-        hitDetection: vectorLayer,
-        source: vectorSource
-    });
-    map.addInteraction(modify);
-
-    // Add a listener to the drag-and-drop interaction
-    modify.on('modifyend', (e) => {
-        const coords = e.features.getArray()[0].getGeometry().getCoordinates();
-        const lonLat = ol.proj.toLonLat(coords);
-        try {
-            callback(lonLat[0], lonLat[1]);
-        } catch (exp) {
-            console.log(exp);
-        }
-    });
-
-    return { map, marker };
+  return { map, marker };
 }
