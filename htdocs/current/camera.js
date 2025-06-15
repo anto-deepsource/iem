@@ -1,5 +1,5 @@
 /* global $ */
 
 export function switchToArchiveMode() {
-    $('#isarchived').prop('checked', true);
+  $("#isarchived").prop("checked", true);
 }
